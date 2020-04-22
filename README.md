@@ -32,21 +32,29 @@ Some questions I have include:
 
 # Planning
 - Hypotheses:
-    - $H_0$: 
+    1. Are there clear groupings in tenure where a customer is more likely to churn? 
+    - $H_0$: There are no cohorts who have a higher rate of churn than other cohorts
+    - $H_a$: There is a cohort with a higher rate of churn than others
+    2. Are there features that indicate a higher propensity to churn? 
+    - $H_0$: There are no features who have a higher rate of churn than other features
+    - $H_a$: Senior citizens have a higher rate of churn 
+    - $H_a$: Month-to-month contracts have a higher rate of churn 
+    - $H_a$: Two-year contracts have a higher rate of churn
+    - $H_a$: People that pay by electronic check have a higher rate of churn 
     - $H_a$: 
+    3. Is there a price threshold for specific services where the likelihood of churn increases once price for those services goes past that point?
+    - $H_0$: There is no price threshold for specific services where the likelihood of churn increases
+    - $H_a$: Higher price phone services are more likeley to churn
+    4. If we looked at churn rate for month-to-month customers after the 12th month and that of 1-year contract customers after the 12th month, are those rates comparable?
+    - $H_0$: Month-to-month customers and 1-year contract customers are equally likely to churn after the 12th month
+    - $H_a$: Month-to-month customers are more likely to churn after the 12th month than 1-year contract customers
+    - $H_a$: 1-year contract customers are more likely to churn after the 12th month than month-to-month customers
+
 - New Hypotheses:
-    - $H_a$: 
+    -  
 - Failed to reject Hypotheses:
-    - $H_a$: 
-- Rejected Hypotheses:
-    -
-
-- Predictor Features (independent):
     - 
-
-- Predicted Feature (dependent): churn
-
-- Feature Engineering Ideas: 
+- Rejected Hypotheses:
     - 
 
 # Acquire Data
@@ -61,7 +69,7 @@ Some questions I have include:
         - 
     - Handle outliers
         - 
-    - Encode variables
+    - Encode variables: gender, churn, churn payment type
         - 
     - Scale data
         - 
