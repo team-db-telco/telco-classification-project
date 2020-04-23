@@ -13,16 +13,19 @@ def split_my_data(df, train_pct):
     '''
     return train_test_split(df, train_size = train_pct, random_state = 294)
 
+#### Handle Nulls Function ####
+def handle_nulls(df):
+    df.total_charges = df['total_charges'].fillna(df['monthly_charges'])
+    return df
+
 #### Encoder Functions ####
-def ohe_encoder(df, col):
-    encoded_values = sorted(list(df[col].unique()))
-    le = preprocessing.LabelEncoder()
-    enc = le.fit_transform(df[col])
-    ohe_array = np.array(enc).reshape(len(enc), 1)
-    ohe = preprocessing.OneHotEncoder(sparse=False, categories='auto')
-    df_ohe = ohe.fit_transform(ohe_array)
-    enc = pd.DataFrame(data=df_ohe, columns=encoded_values, index=df.index)
-    df = df.join(enc)
+def payment_type(df):
+    df['pay_elec_check'] = np.where(df.payment_type == 'Electronic check', 1, 0)
+    df['pay_mail'] = np.where(df.payment_type == 'Mailed check', 1, 0)
+    df['pay_bank'] = np.where(df.payment_type == 'Bank transfer (automatic)', 1, 0)
+    df['pay_cc'] = np.where(df.payment_type == 'Credit card (automatic)', 1, 0)
+    df['pay_auto'] = np.where(df.payment_type == 'Credit card (automatic)', 1,
+                               np.where(df.payment_type == 'Bank transfer (automatic)', 1, 0))
     return df
 
 def boolean_labeler(df, col):
@@ -65,77 +68,19 @@ def internet_services(df):
                                df.device_protection_enc)
     return df
 
-#### Scaler Functions ####
-def standard_scaler(train, test):
+#### Scaler Function ####
+def uniform_scaler(train, valid, test):
     '''
-    Uses the train & test datasets created by the split_my_data function
-    Returns 3 items: std_scaler, train_scaled_std, test_scaled_std
-
-    Scales datasets to Standard Normal Distribution (mean=0, stdev=1)
-    '''
-    std_scaler = StandardScaler(copy=True, with_mean=True, with_std=True).fit(train)
-    train_scaled_std = pd.DataFrame(std_scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
-    test_scaled_std = pd.DataFrame(std_scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
-    return std_scaler, train_scaled_std, test_scaled_std
-
-def scale_inverse(std_scaler, train_scaled_std, test_scaled_std):
-    '''
-    Takes in the scaler and datasets created by the standard_scaler function
-    returns scaled data to it's original values
-    '''
-    train_unscaled = pd.DataFrame(std_scaler.inverse_transform(train_scaled_std), columns=train_scaled_std.columns.values).set_index([train_scaled_std.index.values])
-    test_unscaled = pd.DataFrame(std_scaler.inverse_transform(test_scaled_std), columns=test_scaled_std.columns.values).set_index([test_scaled_std.index.values])
-    return train_unscaled, test_unscaled
-
-def uniform_scaler(train, test):
-    '''
-    Uses the train & test datasets created by the split_my_data function
-    Returns 3 items: unf_scaler, train_scaled_unf, test_scaled_unf
+    Uses the train, valid & test datasets created by the split_my_data function
+    First, make new dfs containing only those columns you want scaled, else this function will scale every numerical value, including booleans.
 
     This is a non-linear transformer, and it smooths out unusual distributions.
     It spreads out the most frequent values and reduces the impact of (marginal) outliers, therefore it is robust.
     It distorts correlations and distances within and across features.
+
     '''
-    unf_scaler = QuantileTransformer(n_quantiles=100, output_distribution='uniform', random_state=123, copy=True).fit(train)
-    train_scaled_unf = pd.DataFrame(unf_scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
-    test_scaled_unf = pd.DataFrame(unf_scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
-    return unf_scaler, train_scaled_unf, test_scaled_unf
-
-def gaussian_scaler(train, test):
-    '''
-    Uses the train & test datasets created by the split_my_data function
-    Returns 3 items: gs_scaler, train_scaled_gs, test_scaled_gs
-
-    Scale to Gaussian-like distribution using a PowerTransformer
-    This uses the Yeo-Johnson method to transform the dataset to resemble standard normal distrubtion.
-    '''
-    gs_scaler = PowerTransformer(method='yeo-johnson', standardize=False, copy=True).fit(train)
-    train_scaled_gs = pd.DataFrame(gs_scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
-    test_scaled_gs = pd.DataFrame(gs_scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
-    return gs_scaler, train_scaled_gs, test_scaled_gs
-
-def min_max_scaler(train, test):
-    '''
-    Uses the train & test datasets created by the split_my_data function
-    Returns 3 items: mm_scaler, train_scaled_mm, test_scaled_mm
-
-    This is a linear transformation. Values will lie between 0 and 1
-    '''
-    mm_scaler = MinMaxScaler(copy=True, feature_range=(0,1)).fit(train)
-    train_scaled_mm = pd.DataFrame(mm_scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
-    test_scaled_mm = pd.DataFrame(mm_scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
-    return mm_scaler, train_scaled_mm, test_scaled_mm
-
-def iqr_robust_scaler(train, test):
-    '''
-    Uses the train & test datasets created by the split_my_data function
-    Returns 3 items: iqr_scaler, train_scaled_iqr, test_scaled_iqr
-
-    Used for data with outliers. Median is removed, and data is scaled to the IQR
-    '''
-    iqr_scaler = RobustScaler(quantile_range=(25.0,75.0), copy=True, with_centering=True, with_scaling=True).fit(train)
-    train_scaled_iqr = pd.DataFrame(iqr_scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
-    test_scaled_iqr = pd.DataFrame(iqr_scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
-    return iqr_scaler, train_scaled_iqr, test_scaled_iqr
-
-
+    unf_scaler = preprocessing.QuantileTransformer(n_quantiles=100, output_distribution='normal', random_state=123, copy=True).fit(train)
+    train = pd.DataFrame(unf_scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
+    valid = pd.DataFrame(unf_scaler.transform(valid), columns=valid.columns.values).set_index([valid.index.values])
+    test = pd.DataFrame(unf_scaler.transform(test), columns=test.columns.values).set_index([test.index.values])
+    return unf_scaler, train, valid, test
