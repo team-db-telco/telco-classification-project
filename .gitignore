@@ -5,3 +5,4 @@ __pycache__/
 env.py
 *.pdf
 data/
+hide/
