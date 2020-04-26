@@ -18,22 +18,20 @@ def group_monthly_charges(df):
     return df
 
 
-
-
-# If they have 1 or less , they get one_year
-# If they have 2 or less , they get two_years
-# If they have 3 or less , they get three_years
-# If they have 4 or less , they get four_years
-# If they have 5 or less , they get five_years
-# If they have 6 or less , they get six_years
-# else, they get zero_years, error check
+# tenure divided into groups by six month increaments
 def group_tenure(df):
-    df['tenure_group'] = np.where( (df['tenure_months'] <= 1), 'one_year',
-                               np.where( (df['tenure_months'] <= 2), 'two_years',
-                                   np.where( (df['tenure_months'] <= 3), 'three_years',
-                                       np.where( (df['tenure_months'] <= 4), 'four_years',
-                                           np.where( (df['tenure_months'] <= 5), 'five_years',
-                                               np.where( (df['tenure_months'] > 5), 'six_years', 'zero_years'))))))
+    df['tenure_group'] = np.where( (df['tenure_months'] <= .5), 'half_a_year',
+                               np.where( (df['tenure_months'] <= 1), 'one_year',
+                                   np.where( (df['tenure_months'] <= 1.5), 'one_&_a_half_years',
+                                       np.where( (df['tenure_months'] <= 2), 'two_years',
+                                           np.where( (df['tenure_months'] <= 2.5), 'two_&_a_half_years',
+                                                np.where( (df['tenure_months'] <= 3), 'three_years',
+                                                   np.where( (df['tenure_months'] <= 3.5), 'three_&_a_half_years',
+                                                       np.where( (df['tenure_months'] <= 4), 'four_years',
+                                                           np.where( (df['tenure_months'] <= 4.5), 'four_&_a_half_years',
+                                                               np.where( (df['tenure_months'] <= 5), 'five_years',
+                                                                    np.where( (df['tenure_months'] <= 5.5), 'five_&_a_half_years',
+                                                                       np.where( (df['tenure_months'] > 5.5), 'six_or_more_years', 'zero_years'))))))))))))
     return df
 
 
