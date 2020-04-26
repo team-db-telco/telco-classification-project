@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import warnings
+warnings.filterwarnings("ignore")
 
 # monthly charges set to groups by range
 def group_monthly_charges(df):
