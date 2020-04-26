@@ -17,6 +17,7 @@ def group_monthly_charges(df):
                                                                                 np.where( (df['monthly_charges'] > 120.00), 'more_then_one_hundred_twenty', 'zero'))))))))))))
     return df
 
+# just adding a line
 
 # tenure divided into groups by six month increaments
 def group_tenure(df):
