@@ -1,7 +1,12 @@
 import pandas as pd
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings("ignore")
+
+pd.options.display.float_format = '{:.3f}'.format
+
 
 # monthly charges set to groups by range
 def group_monthly_charges(df):
@@ -35,6 +40,24 @@ def group_tenure(df):
                                                                np.where( (df['tenure_months'] <= 5), 'five_years',
                                                                     np.where( (df['tenure_months'] <= 5.5), 'five_&_a_half_years',
                                                                        np.where( (df['tenure_months'] > 5.5), 'six_or_more_years', 'zero_years'))))))))))))
+    
     return df
 
 
+def start_explore():
+    df = pd.read_csv('train.csv')
+    df = group_monthly_charges(df)
+    df = group_tenure(df)
+    return df
+
+
+def plot_data(w, x, y, z, df, title):
+    for n in range(z):
+        plt.figure(figsize=(18,12))
+        plt.title(f'\n\n{title} is {n}\n\n', fontsize=18)
+        sns.scatterplot(x, y, data=df[df.internet_services == n], hue=w)
+        plt.show()
+        
+        
+def get_df(train):
+    return train.drop(columns=['Unnamed: 0', 'tenure_months', 'tenure_nml', 'monthly_charges_nml', 'total_charges_nml'])
