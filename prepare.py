@@ -40,7 +40,7 @@ def more_than_two_labels(df, col):
 
 #### New Feature Functions ####
 def months_to_years(df, col):
-    df[f'{col}_months'] = (df[col] / 12).round(2)
+    df[f'{col}_years'] = (df[col] / 12).round(2)
     return df
 
 def extra_lines(df):
