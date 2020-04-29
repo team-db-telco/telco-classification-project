@@ -28,18 +28,18 @@ def group_monthly_charges(df):
 
 # tenure divided into groups by six month increaments
 def group_tenure(df):
-    df['tenure_group'] = np.where( (df['tenure_months'] <= .5), 'half_a_year',
-                               np.where( (df['tenure_months'] <= 1), 'one_year',
-                                   np.where( (df['tenure_months'] <= 1.5), 'one_&_a_half_years',
-                                       np.where( (df['tenure_months'] <= 2), 'two_years',
-                                           np.where( (df['tenure_months'] <= 2.5), 'two_&_a_half_years',
-                                                np.where( (df['tenure_months'] <= 3), 'three_years',
-                                                   np.where( (df['tenure_months'] <= 3.5), 'three_&_a_half_years',
-                                                       np.where( (df['tenure_months'] <= 4), 'four_years',
-                                                           np.where( (df['tenure_months'] <= 4.5), 'four_&_a_half_years',
-                                                               np.where( (df['tenure_months'] <= 5), 'five_years',
-                                                                    np.where( (df['tenure_months'] <= 5.5), 'five_&_a_half_years',
-                                                                       np.where( (df['tenure_months'] > 5.5), 'six_or_more_years', 'zero_years'))))))))))))
+    df['tenure_group'] = np.where( (df['tenure_years'] <= .5), 'half_a_year',
+                               np.where( (df['tenure_years'] <= 1), 'one_year',
+                                   np.where( (df['tenure_years'] <= 1.5), 'one_&_a_half_years',
+                                       np.where( (df['tenure_years'] <= 2), 'two_years',
+                                           np.where( (df['tenure_years'] <= 2.5), 'two_&_a_half_years',
+                                                np.where( (df['tenure_years'] <= 3), 'three_years',
+                                                   np.where( (df['tenure_years'] <= 3.5), 'three_&_a_half_years',
+                                                       np.where( (df['tenure_years'] <= 4), 'four_years',
+                                                           np.where( (df['tenure_years'] <= 4.5), 'four_&_a_half_years',
+                                                               np.where( (df['tenure_years'] <= 5), 'five_years',
+                                                                    np.where( (df['tenure_years'] <= 5.5), 'five_&_a_half_years',
+                                                                       np.where( (df['tenure_years'] > 5.5), 'six_or_more_years', 'zero_years'))))))))))))
     
     return df
 
@@ -51,13 +51,21 @@ def start_explore():
     return df
 
 
-def plot_data(w, x, y, z, df, title):
-    for n in range(z):
-        plt.figure(figsize=(18,12))
-        plt.title(f'\n\n{title} is {n}\n\n', fontsize=18)
-        sns.scatterplot(x, y, data=df[df.internet_services == n], hue=w)
+def plot_data(df, list):
+    for x in list:
+        plt.figure(figsize=(14,10))
+        sns.countplot(x, data=df, hue='churn')
         plt.show()
+        print()
         
-        
-def get_df(train):
-    return train.drop(columns=['Unnamed: 0', 'tenure_months', 'tenure_nml', 'monthly_charges_nml', 'total_charges_nml'])
+def get_dsl_fiber_sig(alpha, dsp_p, dstp_p, dsm_p, fstp_p, fsmp_p):
+    return ([
+        print('The folowing combinations were found to be significant:\n'),
+        print(f'Aplha: {alpha}\n'),
+        print('- DSL,onliine security, & phone  p-value: {:.4f}\n'.format(dsp_p)),
+        print('- DSL, tech support, & phone       p-value: {:.4f}\n'.format(dtsp_p)),
+        print('- DSL, streaming tv, & phone       p-value: {:.4f}\n'.format(dstp_p)),
+        print('- DSL, streaming movies            p-value: {:.4f}\n'.format(dsm_p)),
+        print('- fiber,sreaming tv, & phone       p-value: {:.4f}\n'.format(fstp_p)),
+        print('- fiber,streaming movie, & phone   p-value: {:.4f}\n'.format(fsmp_p))
+    ]) 
